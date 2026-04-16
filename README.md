@@ -1,6 +1,31 @@
 # DSS5104 Machine Learning and Predictive Modelling  
 ## Assignment 2: Fraud Detection Project
 
+## ===== EXECUTION ORDER =====
+Run the notebooks in the following order to generate the final results. Each notebook's inputs and outputs are specified.
+
+1. **1_fe.ipynb (Feature Engineering)**  
+   - **Inputs**: Raw IEEE-CIS data files (`data_raw/IEEE-CIS/ieee-fraud-detection/train_transaction.csv`, `train_identity.csv`)  
+   - **Outputs**: `data/iceee_baseline.parquet` (baseline cleaned data), `data/iceee_feature.parquet` (engineered features)  
+   - **Purpose**: Data preprocessing, memory optimization, feature engineering  
+
+2. **2_ml.ipynb (Machine Learning Models)**  
+   - **Inputs**: `data/iceee_baseline.parquet`, `data/iceee_feature.parquet`  
+   - **Outputs**: `results/feature_impact_results.csv` (baseline vs. engineered comparison), `results/all_ml_probs.csv` (model probabilities for LGBM, XGB, ISO, LOF)  
+   - **Purpose**: Train and evaluate classical ML models  
+
+3. **3_dl.ipynb (Deep Learning Models)**  
+   - **Inputs**: `data/iceee_feature.parquet`  
+   - **Outputs**: `results/dl_results.csv` (probabilities for AE semi-supervised, AE supervised, MLP)  
+   - **Purpose**: Train and evaluate deep learning models (Autoencoders, MLP)  
+
+4. **4_result.ipynb (Results Analysis and Comparison)**  
+   - **Inputs**: `results/all_ml_probs.csv`, `results/dl_results.csv`, `results/feature_impact_results.csv`  
+   - **Outputs**: `report/final_model_comparison_table.csv` (performance ranking), `report/top_10_false_positives.csv`, `report/top_10_false_negatives.csv`, `report/final_pr_curves.png`  
+   - **Purpose**: Combine results, cost-sensitive evaluation, error analysis  
+
+**Note**: Notebooks 2_ml.ipynb and 3_dl.ipynb can be run in parallel after 1_fe.ipynb completes.
+
 ## ===== DATASETS =====
 ### Primary Dataset: IEEE-CIS Fraud Detection
 - Source: https://www.kaggle.com/competitions/ieee-fraud-detection/data  
@@ -19,55 +44,16 @@ Please download them manually and place them in the correct folders.
 ### IEEE-CIS
 Place in:
 Required files:
-- `transaction.csv`
-- `identity.csv`
+- `data_raw/IEEE-CIS/ieee-fraud-detection/train_transaction.csv`
+- `data_raw/IEEE-CIS/ieee-fraud-detection/train_identity.csv`
 
 ### PaySim
 Place in:
 Required file:
-- `PS_20174392719_1491204439457_log.csv`
+- `data_raw/PaySim/PS_20174392719_1491204439457_log.csv`
 
 ## ===== NOTES =====
 - A Kaggle account is required to download the datasets  
 - Processed files (e.g., `merged_data.csv`) are generated locally and not committed
 
 
-
-### ---------------- understanding the notebooks + their output -----------------
-01_ieee_eda.ipynb
-  -> data/ieee_clean.parquet
-
-02_ieee_features.ipynb
-  -> data/ieee_baseline.parquet
-  -> data/ieee_featured.parquet
-
-01_paysim_eda.ipynb
-  -> data/paysim_clean.parquets
-
-02_paysim_features.ipynb
-  -> data/paysim_baseline.parquet
-  -> data/paysim_featured.parquet
-
-03_classical_ml.ipynb   (run once for ieee, once for paysim)
-  -> models/{dataset}_xgb_featured.pkl
-  -> models/{dataset}_xgb_baseline.pkl
-  -> models/{dataset}_iso_forest.pkl
-  -> models/{dataset}_lof.pkl
-  -> results/{dataset}_classical_metrics.json
-  -> results/{dataset}_*_test_preds.npy
-
-04_deep_learning.ipynb  (run once for ieee, once for paysim)
-  -> models/{dataset}_ae_semi.pth
-  -> models/{dataset}_ae_sup.pth
-  -> models/{dataset}_vae_semi.pth
-  -> models/{dataset}_vae_sup.pth
-  -> models/{dataset}_nn.pth
-  -> results/{dataset}_dl_metrics.json
-  -> results/{dataset}_*_test_preds.npy
-
-05_results.ipynb
-  -> loads metrics + saved preds
-  -> PR curves
-  -> cost analysis
-  -> error analysis
-  -> cross-dataset comparison
