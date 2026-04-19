@@ -77,39 +77,46 @@ Raw data files are not included due to size. Download them manually and place th
   ```
 
 ## Execution Order
- 
-Run notebooks in the following order. Notebooks **2_ml**, **2b_paysim_ml**, **3_dl**, and **3b_paysim_dl** can be run in parallel once the corresponding feature engineering notebook has completed.
- 
+
+Run notebooks in the following order. Within each step, the two notebooks can be run in parallel.
+
+---
+
 ### Step 1 — Feature Engineering
- 
+
 | Notebook | Dataset | Inputs | Outputs |
 |----------|---------|--------|---------|
-| `1_fe.ipynb` | IEEE-CIS | `data_raw/IEEE-CIS/ieee-fraud-detection/train_transaction.csv`, `train_identity.csv` | `data/iceee_baseline_{train,val,test}.parquet`, `data/iceee_feature_{train,val,test}.parquet` |
-| `1b_paysim_fe.ipynb` | PaySim | `data_raw/PaySim/PS_20174392719_1491204439457_log.csv` | `data/paysim_baseline.parquet`, `data/paysim_feature.parquet` |
- 
-### Step 2 — Classical ML Models (can run in parallel)
- 
+| `1_fe.ipynb` | IEEE-CIS | `data_raw/IEEE-CIS/ieee-fraud-detection/train_transaction.csv`<br>`data_raw/IEEE-CIS/ieee-fraud-detection/train_identity.csv` | `data/iceee_baseline_train.parquet`<br>`data/iceee_baseline_val.parquet`<br>`data/iceee_baseline_test.parquet`<br>`data/iceee_feature_train.parquet`<br>`data/iceee_feature_val.parquet`<br>`data/iceee_feature_test.parquet` |
+| `1b_paysim_fe.ipynb` | PaySim | `data_raw/PaySim/PS_20174392719_1491204439457_log.csv` | `data/paysim_baseline_train.parquet`<br>`data/paysim_baseline_val.parquet`<br>`data/paysim_baseline_test.parquet`<br>`data/paysim_feature_train.parquet`<br>`data/paysim_feature_val.parquet`<br>`data/paysim_feature_test.parquet` |
+
+---
+
+### Step 2 — Classical ML Models *(can run in parallel)*
+
 | Notebook | Dataset | Inputs | Outputs |
 |----------|---------|--------|---------|
-| `2_ml.ipynb` | IEEE-CIS | `data/iceee_baseline_{train,val}.parquet`, `data/iceee_feature_{train,val,test}.parquet` | `results/feature_impact_results.csv`, `results/all_ml_probs.csv` |
-| `2b_paysim_ml.ipynb` | PaySim | `data/paysim_baseline.parquet`, `data/paysim_feature.parquet` | `results/paysim_feature_impact_results.csv`, `results/paysim_all_ml_probs.csv` |
- 
-### Step 3 — Deep Learning Models (can run in parallel)
- 
+| `2_ml.ipynb` | IEEE-CIS | `data/iceee_baseline_{train,val}.parquet`<br>`data/iceee_feature_{train,val,test}.parquet` | `results/feature_impact_results.csv`<br>`results/all_ml_probs.csv` |
+| `2b_paysim_ml.ipynb` | PaySim | `data/paysim_baseline_{train,val}.parquet`<br>`data/paysim_feature_{train,val,test}.parquet` | `results/paysim_feature_impact_results.csv`<br>`results/paysim_all_ml_probs.csv` |
+
+---
+
+### Step 3 — Deep Learning Models *(can run in parallel)*
+
 | Notebook | Dataset | Inputs | Outputs |
 |----------|---------|--------|---------|
-| `3_dl.ipynb` | IEEE-CIS | `data/iceee_feature_{train,val,test}.parquet` | `results/dl_results.csv` |
-| `3b_paysim_dl.ipynb` | PaySim | `data/paysim_feature.parquet` | `results/paysim_dl_results.csv` |
+| `3_dl.ipynb` | IEEE-CIS | `data/iceee_feature_{train,val,test}.parquet` | `results/dl_results.csv`<br>`report/latent_space_tsne.png` |
+| `3b_paysim_dl.ipynb` | PaySim | `data/paysim_feature_{train,val,test}.parquet` | `results/paysim_dl_results.csv`<br>`report/paysim_latent_space_tsne.png` |
+
  
 > **⚠️ Note for `3_dl.ipynb`:** This notebook was originally run externally (Colab/Kaggle - GPU required for reasonable runtime). To run it locally, make the necessary edits in the first cell:
 > 1. Change `DATA_DIR = '/kaggle/input/datasets/<USER_NAME>'` or `DATA_DIR = '/content/drive/'` → `DATA_DIR = 'data'`
 > 2. In the export cell, change `'/kaggle/working/dl_results.csv'` → `'results/dl_results.csv'`
  
 ### Step 4 — Results & Analysis
- 
+
 | Notebook | Inputs | Outputs |
 |----------|--------|---------|
-| `4_result.ipynb` | `results/all_ml_probs.csv`, `results/dl_results.csv`, `results/feature_impact_results.csv`, `results/paysim_all_ml_probs.csv`, `results/paysim_dl_results.csv`, `results/paysim_feature_impact_results.csv` | `report/final_model_comparison_table.csv`, `report/final_pr_curves.png`, `report/top_10_false_positives.csv`, `report/top_10_false_negatives.csv` |
+| `4_result.ipynb` | `results/all_ml_probs.csv`<br>`results/dl_results.csv`<br>`results/feature_impact_results.csv`<br>`results/paysim_all_ml_probs.csv`<br>`results/paysim_dl_results.csv`<br>`results/paysim_feature_impact_results.csv` | **IEEE-CIS**<br>`report/final_model_comparison_table.csv`<br>`report/final_pr_curves.png`<br>`report/threshold_comparison.png`<br>`report/top_10_false_positives.csv`<br>`report/top_10_false_negatives.csv`<br><br>**PaySim**<br>`report/paysim_final_model_comparison_table.csv`<br>`report/paysim_final_pr_curves.png`<br>`report/paysim_threshold_comparison.png`<br>`report/paysim_top_10_false_positives.csv`<br>`report/paysim_top_10_false_negatives.csv`<br><br>**Both datasets**<br>`report/feature_impact_comparison.png` |
  
 ---
  
